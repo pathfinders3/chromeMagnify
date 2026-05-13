@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "chromeMagnify",
+  "name": "Chrome Magnify",
   "description": "Magnifies the page 4x around the mouse pointer.",
   "version": "1.0.0",
   "permissions": ["tabs"],

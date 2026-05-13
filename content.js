@@ -5,6 +5,8 @@
   let isActive = false;
   let previousTransform = "";
   let previousOrigin = "";
+  let lastMouseX = window.innerWidth / 2;
+  let lastMouseY = window.innerHeight / 2;
 
   const applyMagnification = (x, y) => {
     root.style.transformOrigin = `${x}px ${y}px`;
@@ -12,7 +14,11 @@
   };
 
   const onMouseMove = (event) => {
-    applyMagnification(event.clientX, event.clientY);
+    lastMouseX = event.clientX;
+    lastMouseY = event.clientY;
+    if (isActive) {
+      applyMagnification(event.clientX, event.clientY);
+    }
   };
 
   const deactivate = () => {
@@ -23,12 +29,7 @@
     isActive = false;
     root.style.transform = previousTransform;
     root.style.transformOrigin = previousOrigin;
-    document.removeEventListener("mousemove", onMouseMove, true);
-    document.removeEventListener("click", onClickWhileActive, true);
-  };
-
-  const onClickWhileActive = () => {
-    deactivate();
+    document.removeEventListener("click", deactivate, true);
   };
 
   const activate = () => {
@@ -40,10 +41,11 @@
     previousTransform = root.style.transform;
     previousOrigin = root.style.transformOrigin;
 
-    applyMagnification(window.innerWidth / 2, window.innerHeight / 2);
-    document.addEventListener("mousemove", onMouseMove, true);
-    document.addEventListener("click", onClickWhileActive, true);
+    applyMagnification(lastMouseX, lastMouseY);
+    document.addEventListener("click", deactivate, true);
   };
+
+  document.addEventListener("mousemove", onMouseMove, true);
 
   chrome.runtime.onMessage.addListener((message) => {
     if (message?.type !== "TOGGLE_MAGNIFY") {
