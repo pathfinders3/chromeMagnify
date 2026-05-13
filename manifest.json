@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Chrome Magnify",
+  "description": "Magnifies the page 4x around the mouse pointer.",
+  "version": "1.0.0",
+  "permissions": ["tabs"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "toggle-magnify": {
+      "suggested_key": {
+        "default": "Ctrl+0"
+      },
+      "description": "Toggle 4x magnification"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
