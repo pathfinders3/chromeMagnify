@@ -1,0 +1,2 @@
+# chromeMagnify
+extension
