@@ -1,19 +1,11 @@
-chrome.commands.onCommand.addListener(async (command) => {
-  if (command !== "toggle-magnify") {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type !== "CAPTURE_TAB") {
     return;
   }
 
-  const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
-  const activeTab = tabs[0];
-  if (!activeTab?.id) {
-    return;
-  }
+  chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
+    sendResponse({ dataUrl: dataUrl ?? null });
+  });
 
-  try {
-    await chrome.tabs.sendMessage(activeTab.id, { type: "TOGGLE_MAGNIFY" });
-  } catch (error) {
-    if (!String(error?.message || "").includes("Receiving end does not exist")) {
-      console.error(error);
-    }
-  }
+  return true; // 비동기 응답을 위해 채널 유지
 });
