@@ -1,5 +1,5 @@
 (() => {
-  const LENS_W = 600;
+  const LENS_W = 800;
   const LENS_H = 400;
   const SCALE = 3;
   const DOUBLE_CLICK_MS = 350;
