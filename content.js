@@ -1,7 +1,7 @@
 (() => {
   const LENS_W = 600;
   const LENS_H = 400;
-  const SCALE = 4;
+  const SCALE = 3;
   const DOUBLE_CLICK_MS = 350;
   const MAX_MOVE_PX = 24;
 
@@ -103,18 +103,25 @@
   const activate = () => {
     if (isActive) return;
     isActive = true;
-    createLens();
-    positionLens(lastMouseX, lastMouseY);
-    drawLens(lastMouseX, lastMouseY); // "캡처 중..." 표시
+    screenshotImg = null;
 
     chrome.runtime.sendMessage({ type: "CAPTURE_TAB" }, (response) => {
       if (!isActive) return;
-      if (!response?.dataUrl) return;
+      if (!response?.dataUrl) {
+        deactivate();
+        return;
+      }
       const img = new Image();
       img.onload = () => {
         if (!isActive) return;
         screenshotImg = img;
+        if (!lensCanvas) createLens();
+        positionLens(lastMouseX, lastMouseY);
         drawLens(lastMouseX, lastMouseY);
+      };
+      img.onerror = () => {
+        if (!isActive) return;
+        deactivate();
       };
       img.src = response.dataUrl;
     });
